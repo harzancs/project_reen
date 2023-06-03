@@ -257,7 +257,7 @@ if (isset($_GET['logout'])) {
                             <!-- hidden -->
 
                             <table width="800" border="0" align="center" cellpadding="0" cellspacing="2">
-                                <th>วันที่ฝาก : <input type="datetime-local" name="deposit_date" value="<?= date('Y-m-d H:i:s') ?>" required></th>
+                                <th>วันที่ฝาก : <input type="datetime-local" name="deposit_date" value="<?= date('Y-m-d H:i:s') ?>"  required></th>
                                 <br>
                                 <th>วันที่รับคืน : <input type="datetime-local" name="return_date" value="<?= date('Y-m-d H:i:s',strtotime('+1 day')) ?>" required></th>
                             </table>
@@ -307,7 +307,7 @@ if (isset($_GET['logout'])) {
                                         <select name="room_number" id="room_number1" required>
                                             <option>----- เลขที่ห้องพัก -----</option>
                                             <?php
-                                            $sql3 = " SELECT * FROM room WHERE roomtype = 'ห้องธรรมดา' and r_delete = 1";
+                                            $sql3 = " SELECT * FROM room WHERE roomtype = 'ห้องธรรมดา' and r_delete = 1 and is_active = '1'";
                                             $q3 = mysqli_query($c, $sql3);
                                             while ($f = mysqli_fetch_assoc($q3)) {
                                             ?>
@@ -323,7 +323,7 @@ if (isset($_GET['logout'])) {
                                         <select name="room_number" id="room_number2" required disabled>
                                             <option>----- เลขที่ห้องพัก -----</option>
                                             <?php
-                                            $sql3 = " SELECT * FROM room WHERE roomtype = 'ห้องพิเศษ' and r_delete = 1";
+                                            $sql3 = " SELECT * FROM room WHERE roomtype = 'ห้องพิเศษ' and r_delete = 1 and is_active = '1'";
                                             $q3 = mysqli_query($c, $sql3);
                                             while ($f = mysqli_fetch_assoc($q3)) {
                                             ?>

@@ -24,6 +24,11 @@
             // print_r($_POST);
             $bill = $_GET['bill'];
             $user_id = $_GET['user_id'];
+            $cat_food = 0;
+            if (isset($_POST['cat_food'])) {
+                $cat_food = $_POST['cat_food'];
+            }
+
             //-----
             $c = mysqli_connect("localhost", "root", "", "cat");
             mysqli_query($c, "SET NAMES UTF8");
@@ -64,8 +69,39 @@
                     return 0;
                 }
             }
+
+            function countMeal($date1, $date2)
+            {
+                $a = 0;
+                $b = 0;
+                if (!is_null($date1) && !is_null($date2)) {
+                    $date_1_array = explode(" ", $date1);
+                    $date_2_array = explode(" ", $date2);
+                    //===
+                    $start_day = strtotime($date_1_array[0]);
+                    $end_day = strtotime($date_2_array[0]);
+                    $datediff = $end_day - $start_day;
+                    $day = round($datediff / (60 * 60 * 24));
+                    //===
+                    if (strtotime($date_1_array[1]) > strtotime('08:00:00')) {
+                        $a++;
+                    }
+                    if (strtotime($date_1_array[1]) > strtotime('17:00:00')) {
+                        $a++;
+                    }
+                    if (strtotime($date_2_array[1]) > strtotime('8:00:00')) {
+                        $b++;
+                    }
+                    if (strtotime($date_2_array[1]) > strtotime('17:00:00')) {
+                        $b++;
+                    }
+                    return ((($day * 2) - $a) + $b);
+                } else {
+                    return 0;
+                }
+            }
         } ?>
-        <form action="update_binder.php" method="POST">
+        <form action="return_r.php?bill=<?= $bill ?>&user_id=<?= $user_id ?>" method="post">
             <div class="row py-2">
                 <div class="col">
                     <label>รหัสลูกค้า</label>
@@ -103,52 +139,116 @@
                     <input type="datetime" name="return_date_actual" value="<?= date('Y-m-d H:i:s') ?>" class="form-control" readonly>
                 </div>
             </div>
+            <div class="row py-2">
+                <div class="col">
+                    <label>ประเภทอาหาร</label>
+                    <select name="cat_food" id="cat_food" class="form-control">
+                        <option>----- เลือกอาหาร -----</option>
+                        <option value="1" <?= $cat_food == '1' ? 'selected' : '' ?>>อาหารเม็ด มื้อละ 50 บาท</option>
+                        <option value="2" <?= $cat_food == '2' ? 'selected' : '' ?>>อาหารเปียก มื้อละ 30 บาท</option>
+                        <option value="3" <?= $cat_food == '3' ? 'selected' : '' ?>>นำอาหารมาเอง มื้อละ 10 บาท(ค่าบริการ)</option>
 
-            <!-- // hidden -->
-            <input type="hidden" name="remaining_expenses" value='<?= (ceil((dateDiff($deposit_date, date('Y-m-d H:i:s')) * $room_price) -  $deposit_price)) ?>' class="form-control">
-            <input type="hidden" name="cat_id" value='<?= $cat_id ?>' class="form-control">
-            <!-- // hidden -->
-
-            <div class="card ">
-                <h5 class="card-header bg-info text-white border-0">สรุปค่าใช้จ่าย</h5>
-                <div class="card-body">
-
-                    <div class="card-body row">
-                        <div class="col-12">
-                            <p class="card-text">
-                                ฝากเลี้ยงแมว <?= count($cat); ?> ตัว
-                            </p>
-                        </div>
-                        <div class="col-6">
-                            <p class="card-text">
-                                จำนวน <?= dateDiff($deposit_date, date('Y-m-d H:i:s')) ?> คืน : <?= dateDiff($deposit_date, date('Y-m-d H:i:s')) * $room_price ?> บาท
-                            </p>
-                        </div>
-                        <div class="col-6">
-                            <p class="card-text">
-                                ราคาต่อคืน : <?= $room_price ?> บาท
-                            </p>
-                        </div>
-                        <div class="col-12">
-                            <p class="card-text">
-                                ค่ามัดจำห้อง 50% : <?= $deposit_price ?> บาท (* จ่ายแล้ว)
-                            </p>
-                        </div>
-                        <div class="col-6"></div>
-                        <div class="col-6">
-                            <p class="card-text">
-                                ค่าใช้จ่ายที่เหลือ <?= (ceil((dateDiff($deposit_date, date('Y-m-d H:i:s')) * $room_price) -  $deposit_price)) ?> บาท
-                            </p>
-                        </div>
-                    </div>
+                    </select>
+                </div>
+                <div class="col">
 
                 </div>
 
             </div>
-
-            <button type="submit" name="submit" class="btn btn-success my-3">บันทึกและพิมพ์</button>
-            <a href="return.php" class="btn btn-danger">กลับ</a>
+            <button type="submit" name="submit" class="btn btn-success my-3">คำนวณค่าใช้จ่าย</button>
         </form>
+        <?php
+        if (isset($_POST['cat_food'])) {
+
+
+        ?>
+            <form action="update_binder.php" method="POST">
+                <!-- // hidden -->
+                <input type="hidden" name="cat_id" value='<?= $cat_id ?>' class="form-control">
+                <input type="hidden" name="bill" value='<?= $bill ?>' class="form-control">
+                <input type="hidden" name="deposit_date" value="<?= $_POST['deposit_date'] ?>" class="form-control">
+                <input type="hidden" name="return_date" value="<?= $_POST['return_date'] ?>" class="form-control">
+                <input type="hidden" name="return_date_actual" value="<?= $_POST['return_date_actual'] ?>" class="form-control">
+                <input type="hidden" name="user_id" value="<?= $_POST['user_id'] ?>" class="form-control">
+                <input type="hidden" name="cat_food" value="<?= $_POST['cat_food'] ?>" class="form-control">
+                <!-- // hidden -->
+
+                <div class="card ">
+                    <h5 class="card-header bg-info text-white border-0">สรุปค่าใช้จ่าย</h5>
+                    <div class="card-body">
+
+                        <div class="card-body row">
+                            <div class="col-12">
+                                <p class="card-text">
+                                    ฝากเลี้ยงแมว <?= count($cat); ?> ตัว
+                                </p>
+                            </div>
+                            <div class="col-6">
+                                <p class="card-text">
+                                    จำนวน <?= dateDiff($deposit_date, date('Y-m-d H:i:s')) ?> คืน : <?= dateDiff($deposit_date, date('Y-m-d H:i:s')) * $room_price ?> บาท (<?= $room_price ?> บาท/คืน)
+                                </p>
+                            </div>
+                            <div class="col-6">
+
+                            </div>
+                            <div class="col-6">
+                                <p class="card-text">
+                                    ค่ามัดจำห้อง : <?= $deposit_price ?> บาท (* จ่ายแล้ว)
+                                </p>
+                            </div>
+                            <div class="col-6">
+                                <p class="card-text">
+                                    เหลือค่าห้อง : <?= (ceil((dateDiff($deposit_date, date('Y-m-d H:i:s')) * $room_price) -  $deposit_price)) ?> บาท
+                                    <input type="hidden" name="room_total_price" value="<?= ceil((dateDiff($deposit_date, date('Y-m-d H:i:s')) * $room_price)) ?>" class="form-control">
+                                </p>
+                            </div>
+                            <div class="col-6">
+                                <p class="card-text">
+                                    <?php
+                                    switch ($cat_food) {
+                                        case '1':
+                                            $cat_food_name = 'อาหารเม็ด';
+                                            $cat_food_price = 50;
+                                            break;
+                                        case '2':
+                                            $cat_food_name = 'อาหารเปียก';
+                                            $cat_food_price = 30;
+                                            break;
+                                        case '3':
+                                            $cat_food_name = 'นำอาหารมาเอง(ค่าบริการ)';
+                                            $cat_food_price = 10;
+                                            break;
+                                    }
+
+                                    $count_meal = (countMeal($deposit_date, date('Y-m-d H:i:s')));
+                                    $result_meal_price =  $count_meal * $cat_food_price;
+                                    ?>
+                                    <?= $cat_food_name ?> <?= $count_meal  ?> มื้อ : <?= $result_meal_price ?> บาท
+                                </p>
+                                <input type="hidden" name="count_meal" value="<?= $count_meal ?>" class="form-control">
+                                <input type="hidden" name="food_total_price" value="<?= $result_meal_price ?>" class="form-control">
+                            </div>
+                            <hr>
+                            <br>
+                            <div class="col-12">
+                                <?php
+                                $result_remaining_expenses = $result_meal_price  + (ceil((dateDiff($deposit_date, date('Y-m-d H:i:s')) * $room_price) -  $deposit_price));
+                                ?>
+                                <p class="card-text" style="color: green;">
+                                    ค่าใช้จ่ายทั้งหมด <?= $result_remaining_expenses ?> บาท
+                                </p>
+                                <input type="hidden" name="remaining_expenses" value='<?= $result_remaining_expenses ?>' class="form-control">
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <button type="submit" name="submit" class="btn btn-success my-3">บันทึกและพิมพ์</button>
+                <a href="return.php" class="btn btn-danger">กลับ</a>
+            </form>
+        <?php } ?>
     </div>
 
 </html>

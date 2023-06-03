@@ -20,11 +20,14 @@ if (isset($_POST['user_name'])) {
 
     $insert = mysqli_query($c, $sql);
     if ($insert) {
+        $sql = "UPDATE room SET is_active = '0' WHERE id = {$room_number}";
+        $insert = mysqli_query($c, $sql);
+        //=============
         $cat = json_decode($cat_id);
         for ($i = 0; $i < count($cat); $i++) {
             $sql = "UPDATE customer SET deposit_status = '1' WHERE cat_id = {$cat["$i"]}";
             $insert = mysqli_query($c, $sql);
-        //    echo  $sql;
+            //    echo  $sql;
         }
         echo '<script>alert("บันทึกข้อมูลเรียบร้อยแล้ว");';
         echo 'window.location.href="homeowner.php";</script>';

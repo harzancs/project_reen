@@ -43,7 +43,7 @@ if (isset($_GET['logout'])) {
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>เจ้าของร้าน</title>
+    <title>รับแมวกลับ</title>
 
     <!--Bootstap-->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
@@ -293,23 +293,21 @@ if (isset($_GET['logout'])) {
                 <br>
                 <br> -->
 
-                <table style="width:100%" class="table">
+                <table style="width:100%" class="table table-striped table-hover table-bordered dataTable no-footer">
                     <thead>
                         <tr>
-                            <th>bill id</th>
-                            <th>ชื่อแมว</th>
-                            <th>วันที่ฝาก</th>
-                            <th>วันที่รับคืน</th>
-                            <th>วันที่ทำรายการ</th>
-                            <th>ห้อง</th>
-                            <th>มัดจำ(บาท)</th>
-                            <th>ทั้งหมด(บาท)</th>
-                            <th>สถานะ</th>
+                            <th style="text-align: center;">bill id</th>
+                            <th style="text-align: center;">วันที่ฝาก</th>
+                            <th style="text-align: center;">วันที่รับคืน</th>
+                            <th style="text-align: center;">จำนวนแมว</th>
+                            <th style="text-align: center;">ห้อง</th>
+                            <th style="text-align: center;">มัดจำ/จ่ายเพิ่ม(บาท)</th>
+                            <th style="text-align: center;">สถานะ</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php
-                        $sql1 = " SELECT * FROM deposit WHERE user_id = '" . $user_id . "' ORDER BY return_date DESC LIMIT 10";
+                        $sql1 = " SELECT * FROM deposit WHERE user_id = '" . $user_id . "' ORDER BY id DESC LIMIT 10";
                         $q1 = mysqli_query($c, $sql1);
                         while ($f = mysqli_fetch_assoc($q1)) {
                             //=============
@@ -333,15 +331,13 @@ if (isset($_GET['logout'])) {
                             //=============
                         ?>
                             <tr>
-                                <td><?= $f['id'] ?></td>
-                                <td><?= $cat_name ?></td>
-                                <td><?= $f['deposit_date'] ?></td>
-                                <td><?= $f['return_date'] ?></td>
-                                <td><?= $f['duo_datetime'] ?></td>
-                                <td><?= $room_name ?></td>
-                                <td><?= $f['deposit_price'] ?></td>
-                                <td><?= $f['total_price'] ?></td>
-                                <td><?= $f['status_retuen'] == "1" ? "คืนแล้ว" : '<a href="return_r.php?bill=' . $f["id"] . '&user_id=' . $user_id . '"><input type="button" class="btn btn-primary" value="รับคืน"></a>' ?></td>
+                                <td style="text-align: center;"><?= $f['id'] ?></td>
+                                <td style="text-align: center;"><?= $f['deposit_date'] ?></td>
+                                <td style="text-align: center;"><?= $f['return_date'] ?></td>
+                                <td style="text-align: center;"><?= count($cat) ?></td>
+                                <td style="text-align: center;"><?= $room_name ?></td>
+                                <td style="text-align: center;"><?= $f['deposit_price'] ?>/<?= $f['remaining_expenses'] ?? ' - ' ?></td>
+                                <td style="text-align: center;"><?= $f['status_retuen'] == "1" ? "คืนแล้ว" : '<a href="return_r.php?bill=' . $f["id"] . '&user_id=' . $user_id . '"><input type="button" class="btn btn-primary" value="รับคืน"></a>' ?></td>
                             </tr>
                         <?php
                         }

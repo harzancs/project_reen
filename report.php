@@ -6,20 +6,20 @@
 // }
 session_start();
 require_once("config/config_sqli.php");
-$name= $_SESSION['name'];
-$lastname= $_SESSION['lastname'];
+$name = $_SESSION['name'];
+$lastname = $_SESSION['lastname'];
 
 if (!isset($_SESSION['admin'])) {
-    
+
     $_SESSION['msg'] = "Please Login";
-  header("location:loginform.php");
+    header("location:loginform.php");
 }
 
 if (isset($_GET['logout'])) {
-  
-  unset($_SESSION['admin']);
-  session_destroy();
-  echo "<script>
+
+    unset($_SESSION['admin']);
+    session_destroy();
+    echo "<script>
         $(document).ready(function () {
         Swal.fire ({
               icon: 'success',
@@ -30,9 +30,9 @@ if (isset($_GET['logout'])) {
         });
         });
   </script>";
-  header("refresh:2; url=loginform.php");
-  // header("location: loginform.php");
-  
+    header("refresh:2; url=loginform.php");
+    // header("location: loginform.php");
+
 }
 ?>
 
@@ -46,8 +46,7 @@ if (isset($_GET['logout'])) {
     <title>เจ้าของร้าน</title>
 
     <!--Bootstap-->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 
     <!--boxicon-->
     <link href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css' rel='stylesheet'>
@@ -63,13 +62,13 @@ if (isset($_GET['logout'])) {
 <body>
 
     <?php
-        if(isset($_SESSION['success'])){
-            echo $_SESSION['success'];
-            unset($_SESSION['success']);
-        }elseif(isset($_SESSION['error'])){
-            echo $_SESSION['error'];
-            unset($_SESSION['error']);
-        }
+    if (isset($_SESSION['success'])) {
+        echo $_SESSION['success'];
+        unset($_SESSION['success']);
+    } elseif (isset($_SESSION['error'])) {
+        echo $_SESSION['error'];
+        unset($_SESSION['error']);
+    }
     ?>
     <div class="sidebar close">
         <div class="logo-details">
@@ -172,8 +171,8 @@ if (isset($_GET['logout'])) {
                     </div>
                     <div class="name-job">
                         <div class="profile_name">เจ้าของร้าน</div>
-                        <div class="job"> 
-                        <h6><?php echo $name." ".$lastname; ?>
+                        <div class="job">
+                            <h6><?php echo $name . " " . $lastname; ?>
                         </div>
                     </div>
                     <a href="loginform.php?logout='1'"> <i class='bx bx-log-out' id="logout"></i> </a>
@@ -187,29 +186,105 @@ if (isset($_GET['logout'])) {
         <div class="home-content">
             <i class='bx bx-menu'></i>
         </div>
-<div class="container my-5">
-        <div class=" h4 text-center alert alert-info mb-4 mt-4" role="alert">จัดทำรายงานค่าห้องพักและค่าอาหาร</div>
-        <table width="800" border="0" align="center" cellpadding="0" cellspacing="2">
-        <form action="" method="get" >
-            <th>วันที่ฝาก : <input type="datetime-local" name="mydata"></th>
-                
-        </form>
+        <div class="container my-5">
+            <form action="report.php" method="get">
+                <div class=" h4 text-center alert alert-info mb-4 mt-4" role="alert">จัดทำรายงานค่าห้องพักและค่าอาหาร</div>
+                <table width="800" border="0" align="center" cellpadding="0" cellspacing="2">
 
-        <br>
-        <form action="" method="get" >
-            <th>ถึงวันที่ : <input type="datetime-local" name="mydata"></th>
-           
-        </form>
-        </table>
+                    <th>วันที่ฝาก : <input type="datetime-local" value="<?= isset($_GET['start_date']) ? $_GET['start_date'] : date('Y-m-d H:i:s', strtotime('-1 day'))  ?>" name="start_date"></th>
 
-           
-            <a href="homeowner.php" class="btn btn-danger">กลับ</a>
-        </form>
-    </div>
-    <script src="script.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
-    </script>
+
+
+                    <th>ถึงวันที่ : <input type="datetime-local" value="<?= isset($_GET['end_date']) ? $_GET['end_date'] : date('Y-m-d H:i:s')  ?>" name="end_date"></th>
+
+                </table>
+
+                <button type="submit" class="btn btn-success my-3">ตกลง</button>
+                <a href="homeowner.php" class="btn btn-danger">กลับ</a>
+            </form>
+        </div>
+        <?php
+        if (isset($_GET['start_date'])) {
+
+        ?>
+            <div class="container my-5">
+                <table style="width:100%" class="table table-striped table-hover table-bordered dataTable no-footer">
+                    <thead>
+                        <tr>
+                            <th style="text-align: center;">bill id</th>
+                            <th style="text-align: center;">ชื่อลูกค้า</th>
+                            <th style="text-align: center;">วันที่ทำรายการ</th>
+                            <th style="text-align: center;">ค่าห้องพัก</th>
+                            <th style="text-align: center;">ค่าอาหาร</th>
+                            <th style="text-align: center;">รวม</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        $c = mysqli_connect("localhost", "root", "", "cat");
+                        mysqli_query($c, "SET NAMES UTF8");
+
+                        $sql1 = " SELECT * FROM deposit WHERE duo_datetime BETWEEN  '" .  $_GET['start_date'] . "' AND '" .  $_GET['end_date'] . "' ORDER BY id ASC";
+                        $q1 = mysqli_query($c, $sql1);
+
+                        $room_total_price  = 0;
+                        $food_total_price  = 0;
+
+                        while ($f = mysqli_fetch_assoc($q1)) {
+                            //=============
+                            $cat_name = "";
+                            $cat = json_decode($f['cat_id']);
+                            for ($i = 0; $i < count($cat); $i++) {
+                                $sql2 = " SELECT * FROM customer WHERE cat_id = '" . $cat[$i] . "'";
+                                $q2 = mysqli_query($c, $sql2);
+                                while ($ca = mysqli_fetch_assoc($q2)) {
+                                    $cat_name = $cat_name . $ca["cat_name"] . ", ";
+                                }
+                            }
+                            //=============
+                            $room_name = "";
+                            $sql3 = " SELECT * FROM room WHERE id = " . $f['room_number'] . "";
+                            $q3 = mysqli_query($c, $sql3);
+                            while ($ca = mysqli_fetch_assoc($q3)) {
+                                $room_name = $ca["roomtype"] . " - " . $ca["id_room"];
+                            }
+                            //=============
+                            $user_name = "";
+                            $sql3 = " SELECT * FROM user WHERE id = " . $f['user_id'] . "";
+                            $q3 = mysqli_query($c, $sql3);
+                            while ($ca = mysqli_fetch_assoc($q3)) {
+                                $user_name = $ca["name"] . "  " . $ca["lastname"];
+                            }
+
+                            //=============
+                        ?>
+                            <tr>
+                                <td style="text-align: center;"><?= $f['id'] ?></td>
+                                <td style="text-align: center;"><?= $user_name ?></td>
+                                <td style="text-align: center;"><?= $f['duo_datetime'] ?></td>
+                                <td style="text-align: center;"><?= $f['room_total_price'] ?></td>
+                                <td style="text-align: center;"><?= $f['food_total_price'] ?></td>
+                                <td style="text-align: center;"><?= $f['room_total_price'] + $f['food_total_price']  ?></td>
+                            </tr>
+
+                        <?php
+                            $room_total_price = $room_total_price + $f['room_total_price'];
+                            $food_total_price = $food_total_price + $f['food_total_price'];
+                        }
+
+                        mysqli_close($c);
+                        ?>
+                        <tr>
+                            <td style="text-align: center;" colspan="3">รวม</td>
+                            <td style="text-align: center;"><?= $room_total_price ?></td>
+                            <td style="text-align: center;"><?= $food_total_price ?></td>
+                            <td style="text-align: center;"><?= $food_total_price + $room_total_price ?></td>
+                        </tr>
+                    </tbody>
+            </div>
+        <?php } ?>
+        <script src="script.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
+        </script>
+
 </html>
-
-

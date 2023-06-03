@@ -212,6 +212,7 @@ require_once "../config/config_sqli.php";
                     <th>เลขที่ห้องพัก</th>
                     <th>ประเภทห้องพัก</th>
                     <th>ราคา</th>
+                    <th>สถานะ</th>
                     <th class="text-center">จัดการ</th>
                 </tr>
             </thead>
@@ -232,6 +233,7 @@ require_once "../config/config_sqli.php";
                     <td><?php echo $room['id_room']; ?></td>
                     <td><?php echo $room['roomtype']; ?></td>
                     <td><?php echo $room['roomprice']; ?></td>
+                    <td><?php echo $room['is_active'] == 1 ? '- ว่าง -' : 'ใช้งานอยู่'; ?></td>
                     <td class="text-center">
                         <a href="edit_room.php?id=<?php echo $room['id'];  ?>"
                             class="icon-cog fs-5 me-3 btn btn-outline-warning"><i class="bi bi-pencil-fill"></i>
