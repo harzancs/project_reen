@@ -224,7 +224,8 @@ if (isset($_GET['logout'])) {
                         $c = mysqli_connect("localhost", "root", "", "cat");
                         mysqli_query($c, "SET NAMES UTF8");
 
-                        $sql1 = " SELECT * FROM deposit WHERE duo_datetime BETWEEN  '" .  $_GET['start_date'] . "' AND '" .  $_GET['end_date'] . "' ORDER BY id ASC";
+                        $sql1 = " SELECT * FROM return_cat WHERE duo_datetime BETWEEN  '" .  $_GET['start_date'] . "' AND '" .  $_GET['end_date'] . "' ORDER BY id DESC";
+                        // echo $sql1;
                         $q1 = mysqli_query($c, $sql1);
 
                         $room_total_price  = 0;
@@ -232,21 +233,28 @@ if (isset($_GET['logout'])) {
 
                         while ($f = mysqli_fetch_assoc($q1)) {
                             //=============
-                            $cat_name = "";
-                            $cat = json_decode($f['cat_id']);
-                            for ($i = 0; $i < count($cat); $i++) {
-                                $sql2 = " SELECT * FROM customer WHERE cat_id = '" . $cat[$i] . "'";
-                                $q2 = mysqli_query($c, $sql2);
-                                while ($ca = mysqli_fetch_assoc($q2)) {
-                                    $cat_name = $cat_name . $ca["cat_name"] . ", ";
-                                }
+                            $room_number = "";
+                            $sql4 = " SELECT * FROM deposit WHERE bill_id = {$f['bill_id_deposit']} GROUP BY bill_id";
+                            $q4 = mysqli_query($c, $sql4);
+                            while ($ca = mysqli_fetch_assoc($q4)) {
+                                $room_number = $ca["room_number"];
                             }
                             //=============
-                            $room_name = "";
-                            $sql3 = " SELECT * FROM room WHERE id = " . $f['room_number'] . "";
+                            // $cat_name = "";
+                            // $cat = json_decode($f['cat_id']);
+                            // for ($i = 0; $i < count($cat); $i++) {
+                            //     $sql2 = " SELECT * FROM customer WHERE cat_id = '" . $cat[$i] . "'";
+                            //     $q2 = mysqli_query($c, $sql2);
+                            //     while ($ca = mysqli_fetch_assoc($q2)) {
+                            //         $cat_name = $cat_name . $ca["cat_name"] . ", ";
+                            //     }
+                            // }
+                            //=============
+                            $room_price = "";
+                            $sql3 = " SELECT * FROM room WHERE id = " . $room_number . "";
                             $q3 = mysqli_query($c, $sql3);
                             while ($ca = mysqli_fetch_assoc($q3)) {
-                                $room_name = $ca["roomtype"] . " - " . $ca["id_room"];
+                                $room_price = $ca["roomprice"] * $f['number_nights'];
                             }
                             //=============
                             $user_name = "";
@@ -259,17 +267,17 @@ if (isset($_GET['logout'])) {
                             //=============
                         ?>
                             <tr>
-                                <td style="text-align: center;"><?= $f['id'] ?></td>
+                                <td style="text-align: center;"><?= $f['bill_id'] ?></td>
                                 <td style="text-align: center;"><?= $user_name ?></td>
                                 <td style="text-align: center;"><?= $f['duo_datetime'] ?></td>
-                                <td style="text-align: center;"><?= $f['room_total_price'] ?></td>
-                                <td style="text-align: center;"><?= $f['food_total_price'] ?></td>
-                                <td style="text-align: center;"><?= $f['room_total_price'] + $f['food_total_price']  ?></td>
+                                <td style="text-align: center;"><?= $room_price ?></td>
+                                <td style="text-align: center;"><?= $f['total_food_price'] ?></td>
+                                <td style="text-align: center;"><?= $f['total_food_price'] + $room_price  ?></td>
                             </tr>
 
                         <?php
-                            $room_total_price = $room_total_price + $f['room_total_price'];
-                            $food_total_price = $food_total_price + $f['food_total_price'];
+                            $room_total_price = $room_total_price + $room_price;
+                            $food_total_price = $food_total_price + $f['total_food_price'];
                         }
 
                         mysqli_close($c);

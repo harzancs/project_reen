@@ -202,7 +202,7 @@ if (isset($_GET['logout'])) {
                 <button type="submit" class="btn btn-success my-3">ตกลง</button>
                 <a href="homeowner.php" class="btn btn-danger">กลับ</a>
             </form>
-           
+
         </div>
         <?php
         if (isset($_GET['start_date'])) {
@@ -214,12 +214,9 @@ if (isset($_GET['logout'])) {
                         <tr>
                             <th style="text-align: center;">bill id</th>
                             <th style="text-align: center;">ชื่อลูกค้า</th>
-                            <th style="text-align: center;">ห้องพัก</th>
-                            <th style="text-align: center;">วันที่มัดจำ</th>
-                            <th style="text-align: center;">มัดจำ</th>
-                            <th style="text-align: center;">วันที่จ่ายที่เหลือ</th>
-                            <th style="text-align: center;">ที่เหลือ</th>
-                            <th style="text-align: center;">รวม</th>
+                            <th style="text-align: center;">ชนิดบิล</th>
+                            <th style="text-align: center;">วันที่ทำรายการ</th>
+                            <th style="text-align: center;">ค่าใช้จ่าย</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -227,30 +224,42 @@ if (isset($_GET['logout'])) {
                         $c = mysqli_connect("localhost", "root", "", "cat");
                         mysqli_query($c, "SET NAMES UTF8");
 
-                        $sql1 = " SELECT * FROM deposit WHERE duo_datetime BETWEEN  '" .  $_GET['start_date'] . "' AND '" .  $_GET['end_date'] . "' ORDER BY id ASC";
+
+                        $sql1 = " SELECT * FROM bill WHERE duo_time BETWEEN  '" .  $_GET['start_date'] . "' AND '" .  $_GET['end_date'] . "' ORDER BY id DESC";
                         $q1 = mysqli_query($c, $sql1);
 
                         $room_total_price  = 0;
                         $food_total_price  = 0;
-
+                        $total_price = 0;
+                        $number = 0;
                         while ($f = mysqli_fetch_assoc($q1)) {
+                            $number++;
                             //=============
-                            $cat_name = "";
-                            $cat = json_decode($f['cat_id']);
-                            for ($i = 0; $i < count($cat); $i++) {
-                                $sql2 = " SELECT * FROM customer WHERE cat_id = '" . $cat[$i] . "'";
-                                $q2 = mysqli_query($c, $sql2);
-                                while ($ca = mysqli_fetch_assoc($q2)) {
-                                    $cat_name = $cat_name . $ca["cat_name"] . ", ";
+                            // $cat_name = "";
+                            // $sql2 = " SELECT * FROM customer WHERE cat_id = '" . $f['cat_id'] . "'";
+                            // $q2 = mysqli_query($c, $sql2);
+                            // while ($ca = mysqli_fetch_assoc($q2)) {
+                            //     $cat_name = $cat_name . $ca["cat_name"] . ", ";
+                            // }
+
+                            //=============
+                            if ($f['bill_type'] == "deposit") {
+                                $price = "";
+                                $sql3 = " SELECT * FROM deposit WHERE bill_id = " . $f['id'] . " GROUP BY bill_id";
+                                $q3 = mysqli_query($c, $sql3);
+                                while ($ca = mysqli_fetch_assoc($q3)) {
+                                    $price = $ca["deposit_price"];
+                                }
+                            } else if ($f['bill_type'] == "return") {
+                                $price = "";
+                                $sql3 = " SELECT * FROM return_cat WHERE bill_id = " . $f['id'] . " GROUP BY bill_id";
+                                $q3 = mysqli_query($c, $sql3);
+                                while ($ca = mysqli_fetch_assoc($q3)) {
+                                    $price = $ca["total_price"];
                                 }
                             }
-                            //=============
-                            $room_name = "";
-                            $sql3 = " SELECT * FROM room WHERE id = " . $f['room_number'] . "";
-                            $q3 = mysqli_query($c, $sql3);
-                            while ($ca = mysqli_fetch_assoc($q3)) {
-                                $room_name = $ca["roomtype"] . " - " . $ca["id_room"];
-                            }
+
+
                             //=============
                             $user_name = "";
                             $sql3 = " SELECT * FROM user WHERE id = " . $f['user_id'] . "";
@@ -264,21 +273,21 @@ if (isset($_GET['logout'])) {
                             <tr>
                                 <td style="text-align: center;"><?= $f['id'] ?></td>
                                 <td style="text-align: center;"><?= $user_name ?></td>
-                                <td style="text-align: center;"><?=  $room_name ?></td>
-                                <td style="text-align: center;"><?= $f['duo_datetime'] ?></td>
-                                <td style="text-align: center;"><?= $f['deposit_price'] ?></td>
-                                <td style="text-align: center;"><?= $f['return_date_actual'] ?? " - " ?></td>
-                                <td style="text-align: center;"><?= $f['remaining_expenses']  ?? " - "  ?></td>
-                                <td style="text-align: center;"><?= $f['deposit_price'] + $f['remaining_expenses']  ?></td>
+                                <td style="text-align: center;"><?= $f['bill_type'] ?></td>
+                                <td style="text-align: center;"><?= $f['duo_time'] ?></td>
+                                <td style="text-align: center;"><?= $price ?></td>
                             </tr>
 
                         <?php
-                          
+                            $total_price = $total_price + $price;
                         }
 
                         mysqli_close($c);
                         ?>
-                       
+                        <tr>
+                            <td colspan="4" style="text-align: center;">ทั้งหมด <?= $number ?> รายการ</td>
+                            <td style="text-align: center;"><?= $total_price ?></td>
+                        </tr>
                     </tbody>
             </div>
         <?php } ?>

@@ -296,7 +296,7 @@ if (isset($_GET['logout'])) {
                 <table style="width:100%" class="table table-striped table-hover table-bordered dataTable no-footer">
                     <thead>
                         <tr>
-                            <th style="text-align: center;">bill id</th>
+                            <th style="text-align: center;">เลขที่ฝาก</th>
                             <th style="text-align: center;">วันที่ฝาก</th>
                             <th style="text-align: center;">วันที่รับคืน</th>
                             <th style="text-align: center;">จำนวนแมว</th>
@@ -307,19 +307,19 @@ if (isset($_GET['logout'])) {
                     </thead>
                     <tbody>
                         <?php
-                        $sql1 = " SELECT * FROM deposit WHERE user_id = '" . $user_id . "' ORDER BY id DESC LIMIT 10";
+                        $sql1 = " SELECT *, count(bill_id) as count_cat FROM deposit WHERE user_id = '" . $user_id . "' GROUP BY bill_id ORDER BY bill_id DESC";
                         $q1 = mysqli_query($c, $sql1);
                         while ($f = mysqli_fetch_assoc($q1)) {
                             //=============
-                            $cat_name = "";
-                            $cat = json_decode($f['cat_id']);
-                            for ($i = 0; $i < count($cat); $i++) {
-                                $sql2 = " SELECT * FROM customer WHERE cat_id = '" . $cat[$i] . "'";
-                                $q2 = mysqli_query($c, $sql2);
-                                while ($ca = mysqli_fetch_assoc($q2)) {
-                                    $cat_name = $cat_name . $ca["cat_name"] . ", ";
-                                }
-                            }
+                            // $cat_name = "";
+                            // $cat = json_decode($f['cat_id']);
+                            // for ($i = 0; $i < count($cat); $i++) {
+                            //     $sql2 = " SELECT * FROM customer WHERE cat_id = '" . $cat[$i] . "'";
+                            //     $q2 = mysqli_query($c, $sql2);
+                            //     while ($ca = mysqli_fetch_assoc($q2)) {
+                            //         $cat_name = $cat_name . $ca["cat_name"] . ", ";
+                            //     }
+                            // }
                             //=============
                             $room_name = "";
                             $sql3 = " SELECT * FROM room WHERE id = " . $f['room_number'] . "";
@@ -334,10 +334,10 @@ if (isset($_GET['logout'])) {
                                 <td style="text-align: center;"><?= $f['id'] ?></td>
                                 <td style="text-align: center;"><?= $f['deposit_date'] ?></td>
                                 <td style="text-align: center;"><?= $f['return_date'] ?></td>
-                                <td style="text-align: center;"><?= count($cat) ?></td>
+                                <td style="text-align: center;"><?= $f['count_cat'] ?></td>
                                 <td style="text-align: center;"><?= $room_name ?></td>
                                 <td style="text-align: center;"><?= $f['deposit_price'] ?>/<?= $f['remaining_expenses'] ?? ' - ' ?></td>
-                                <td style="text-align: center;"><?= $f['status_retuen'] == "1" ? "คืนแล้ว" : '<a href="return_r.php?bill=' . $f["id"] . '&user_id=' . $user_id . '"><input type="button" class="btn btn-primary" value="รับคืน"></a>' ?></td>
+                                <td style="text-align: center;"><?= $f['status_retuen'] == "1" ? "คืนแล้ว" : '<a href="return_r.php?bill=' . $f["bill_id"] . '&user_id=' . $user_id . '"><input type="button" class="btn btn-primary" value="รับคืน"></a>' ?></td>
                             </tr>
                         <?php
                         }

@@ -352,7 +352,11 @@ if (isset($_GET['logout'])) {
                                 </thead>
                                 <tbody>
                                     <?php
-                                    $sql1 = " SELECT * FROM customer WHERE name = '" . $_GET['user'] . "'  and c_status = 1";
+                                    $sql1 = "SELECT a.*,b.food_type AS food FROM customer AS a
+                                            INNER JOIN food AS b
+                                            ON a.name = '" . $_GET['user'] . "'  
+                                            AND a.c_status = 1
+                                            AND a.cat_food = b.id";
                                     $q1 = mysqli_query($c, $sql1);
                                     while ($f = mysqli_fetch_assoc($q1)) {
                                     ?>
@@ -361,7 +365,7 @@ if (isset($_GET['logout'])) {
                                             <td><?= $f['cat_name'] ?></td>
                                             <td><?= $f['sex'] ?></td>
                                             <td><?= $f['species'] ?></td>
-                                            <td><?= $f['cat_food'] ?></td>
+                                            <td><?= $f['food'] ?></td>
                                             <td style="color: <?= $f['deposit_status'] == 0 ? "green" : "red" ?>"><?= $f['deposit_status'] == 0 ? "ยังไม่ฝาก" : "รับฝากอยู่" ?></td>
                                         </tr>
                                     <?php

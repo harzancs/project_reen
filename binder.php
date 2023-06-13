@@ -96,6 +96,7 @@
             <input type="hidden" name="total_price" value='<?= ceil((dateDiff($deposit_date, $return_date) * $room_price)) ?>' class="form-control">
             <input type="hidden" name="room_number" value='<?= $room_number ?>' class="form-control">
             <input type="hidden" name="room_type" value='<?= $room_type ?>' class="form-control">
+            <input type="hidden" name="number_nights" value='<?= dateDiff($deposit_date, $return_date) ?>' class="form-control">
             <!-- // hidden -->
             <div class="card ">
                 <h5 class="card-header bg-info text-white border-0">สรุปค่าใช้จ่าย</h5>
