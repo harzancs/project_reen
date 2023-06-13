@@ -68,10 +68,7 @@ if (isset($_POST['bill_id'])) {
             echo "Error: " . $sql . "<br>" . mysqli_error($c);
         }
     }
-
-
 }
-
 ?>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
