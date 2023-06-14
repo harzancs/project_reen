@@ -205,10 +205,11 @@ if (isset($_GET['logout'])) {
         </div>
         <?php
         if (isset($_GET['start_date'])) {
-
         ?>
+
             <div class="container my-5">
-                <table style="width:100%" class="table table-striped table-hover table-bordered dataTable no-footer">
+                <a href="report_print.php?start_date=<?= $_GET['start_date'] ?>&end_date=<?= $_GET['end_date'] ?>" target="_blank" class="btn btn-primary">พิมพ์</a>
+                <table style="width:100%;    margin-top: 10px;" class="table table-striped table-hover table-bordered dataTable no-footer">
                     <thead>
                         <tr>
                             <th style="text-align: center;">bill id</th>
@@ -239,16 +240,6 @@ if (isset($_GET['logout'])) {
                             while ($ca = mysqli_fetch_assoc($q4)) {
                                 $room_number = $ca["room_number"];
                             }
-                            //=============
-                            // $cat_name = "";
-                            // $cat = json_decode($f['cat_id']);
-                            // for ($i = 0; $i < count($cat); $i++) {
-                            //     $sql2 = " SELECT * FROM customer WHERE cat_id = '" . $cat[$i] . "'";
-                            //     $q2 = mysqli_query($c, $sql2);
-                            //     while ($ca = mysqli_fetch_assoc($q2)) {
-                            //         $cat_name = $cat_name . $ca["cat_name"] . ", ";
-                            //     }
-                            // }
                             //=============
                             $room_price = "";
                             $sql3 = " SELECT * FROM room WHERE id = " . $room_number . "";

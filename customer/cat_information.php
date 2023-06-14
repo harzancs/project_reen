@@ -220,7 +220,11 @@ require_once "../config/config_sqli.php";
             <tbody>
                 <?php 
                     /* $stmt = "SELECT * FROM customer WHERE c_status='1'" ; */
-                    $stmt = "SELECT * FROM customer WHERE c_status='1'" ;
+                    $stmt = "SELECT a.* ,b.food_type AS food_name
+                             FROM customer AS a
+                             INNER JOIN food AS b
+                             ON a.c_status='1'
+                             AND a.cat_food = b.id" ;
                     $customer=mysqli_query($conn,$stmt);
 
 
@@ -235,7 +239,7 @@ require_once "../config/config_sqli.php";
                     <td><?php echo $customer['cat_name']; ?></td>
                     <td><?php echo $customer['sex']; ?></td>
                     <td><?php echo $customer['species']; ?></td>
-                    <td><?php echo $customer['cat_food']; ?></td>
+                    <td><?php echo $customer['food_name']; ?></td>
                     <td><?php echo $customer['name']; ?></td>
                    
                 </tr>
