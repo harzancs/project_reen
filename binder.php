@@ -12,7 +12,7 @@
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/dataTables.bootstrap5.min.css">
-
+    <?php require  'util\convert_number.php'; ?>
 </head>
 
 <body>
@@ -123,12 +123,20 @@
                     </div>
                     <div class="col-6"></div>
                     <div class="col-6">
-                        <p class="card-text">
-                            ค่าใช้จ่ายทั้งหมด <?= ceil((dateDiff($deposit_date, $return_date) * $room_price) / 2) ?> บาท
-                        </p>
+
                     </div>
                 </div>
 
+            </div>
+            <div class="card ">
+                <h5 class="card-header text-black border-0">
+                    <p class="card-text">
+                        <?php
+                        $total = ceil((dateDiff($deposit_date, $return_date) * $room_price) / 2);
+                        ?>
+                        ค่าใช้จ่ายทั้งหมด <?= $total ?> บาท (<?= Convert($total) ?>)
+                    </p>
+                </h5>
             </div>
 
             <button type="submit" name="submit" class="btn btn-success my-3">บันทึกและพิมพ์</button>

@@ -1,3 +1,4 @@
+<?php require  'util\convert_number.php'; ?>
 <?php
 $c = mysqli_connect("localhost", "root", "", "cat");
 mysqli_query($c, "SET NAMES UTF8");
@@ -224,8 +225,8 @@ if (isset($_POST['bill_id'])) {
                 <td align="right"><?= $food_total_price ?></td>
             </tr>
             <tr>
-                <td colspan="2" align="right">จำนวนเงิน</td>
-                <td align="right"><?= $remaining_expenses ?></td>
+                <td colspan="2" align="center"><b>จำนวนเงิน (<?= Convert($remaining_expenses) ?>)</b> </td>
+                <td align="right"><b> <?= $remaining_expenses ?></b></td>
             </tr>
             <!-- <tr>
                 <td colspan="2" align="right">รวมราคาทั้งสิน</td>

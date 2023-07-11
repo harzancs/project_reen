@@ -1,3 +1,4 @@
+<?php require  'util\convert_number.php'; ?>
 <?php
 $c = mysqli_connect("localhost", "root", "", "cat");
 mysqli_query($c, "SET NAMES UTF8");
@@ -221,8 +222,8 @@ if (isset($_POST['user_name'])) {
             </tr>
 
             <tr>
-                <td colspan="2" align="right">จำนวนเงิน</td>
-                <td align="right"><?= $deposit_price  ?></td>
+                <td colspan="2" align="center"><b>จำนวนเงิน (<?= Convert($deposit_price) ?>)</b> </td>
+                <td align="right"><b><?= $deposit_price  ?></b></td>
             </tr>
             <!-- <tr>
                 <td colspan="2" align="right">รวมราคาทั้งสิน</td>

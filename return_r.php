@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/dataTables.bootstrap5.min.css">
 
+    <?php require  'util\convert_number.php'; ?>
 </head>
 
 <body>
@@ -192,24 +193,24 @@
                             <input type="hidden" name="count_meal" value="<?= $count_meal ?>" class="form-control">
                             <input type="hidden" name="food_total_price" value="<?= $result_meal_price ?>" class="form-control">
                         </div>
-                        <br>
-                        <hr>
-                        <br>
-                        <div class="col-12">
-                            <?php
-                            $result_remaining_expenses = $result_meal_price  + (ceil((dateDiff($deposit_date, date('Y-m-d H:i:s')) * $room_price) -  $deposit_price));
-                            ?>
-                            <p class="card-text" style="color: green;">
-                                ค่าใช้จ่ายทั้งหมด <?= $result_remaining_expenses ?> บาท
-                            </p>
-                            <input type="hidden" name="remaining_expenses" value='<?= $result_remaining_expenses ?>' class="form-control">
-                            <input type="hidden" name="number_nights" value='<?= dateDiff($deposit_date, date('Y-m-d H:i:s')) ?>' class="form-control">
-                        </div>
+
                     </div>
 
                 </div>
 
             </div>
+            <div class="card ">
+                <h5 class="card-header text-black border-0">
+                    <p class="card-text">
+                        <?php
+                        $result_remaining_expenses = $result_meal_price  + (ceil((dateDiff($deposit_date, date('Y-m-d H:i:s')) * $room_price) -  $deposit_price));
+                        ?>
+                        ค่าใช้จ่ายทั้งหมด <?= $result_remaining_expenses ?> บาท (<?= Convert($result_remaining_expenses) ?>)
+                    </p>
+                </h5>
+            </div>
+            <input type="hidden" name="remaining_expenses" value='<?= $result_remaining_expenses ?>' class="form-control">
+            <input type="hidden" name="number_nights" value='<?= dateDiff($deposit_date, date('Y-m-d H:i:s')) ?>' class="form-control">
 
             <button type="submit" name="submit" class="btn btn-success my-3">บันทึกและพิมพ์</button>
             <a href="return.php" class="btn btn-danger">กลับ</a>

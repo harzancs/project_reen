@@ -285,8 +285,8 @@ if (isset($_GET['logout'])) {
                         mysqli_close($c);
                         ?>
                         <tr>
-                            <td colspan="4" style="text-align: center;">ทั้งหมด <?= $number ?> รายการ</td>
-                            <td style="text-align: center;"><?= $total_price ?></td>
+                            <td colspan="4" style="text-align: center;font-weight: bold;">ทั้งหมด <?= $number ?> รายการ</td>
+                            <td style="text-align: center;font-weight: bold;"><?= $total_price ?></td>
                         </tr>
                     </tbody>
             </div>

@@ -274,10 +274,10 @@ if (isset($_GET['logout'])) {
                         mysqli_close($c);
                         ?>
                         <tr>
-                            <td style="text-align: center;" colspan="3">รวม</td>
-                            <td style="text-align: center;"><?= $room_total_price ?></td>
-                            <td style="text-align: center;"><?= $food_total_price ?></td>
-                            <td style="text-align: center;"><?= $food_total_price + $room_total_price ?></td>
+                            <td style="text-align: center;font-weight: bold;" colspan="3">รวม</td>
+                            <td style="text-align: center;font-weight: bold;"><?= $room_total_price ?></td>
+                            <td style="text-align: center;font-weight: bold;"><?= $food_total_price ?></td>
+                            <td style="text-align: center;font-weight: bold;"><?= $food_total_price + $room_total_price ?></td>
                         </tr>
                     </tbody>
             </div>
