@@ -169,9 +169,10 @@
                                 ฝากเลี้ยงแมว <?= count($cat); ?> ตัว
                             </p>
                         </div>
+                        <?php $count_night =  dateDiff($deposit_date, date('Y-m-d H:i:s')) ?>
                         <div class="col-6">
                             <p class="card-text">
-                                จำนวน <?= dateDiff($deposit_date, date('Y-m-d H:i:s')) ?> คืน : <?= dateDiff($deposit_date, date('Y-m-d H:i:s')) * $room_price ?> บาท (<?= $room_price ?> บาท/คืน)
+                                จำนวน <?= $count_night ?> คืน : <?= $count_night * $room_price ?> บาท (<?= $room_price ?> บาท/คืน)
                             </p>
                         </div>
                         <div class="col-6">
@@ -184,8 +185,8 @@
                         </div>
                         <div class="col-6">
                             <p class="card-text">
-                                เหลือค่าห้อง : <?= (ceil((dateDiff($deposit_date, date('Y-m-d H:i:s')) * $room_price) -  $deposit_price)) ?> บาท
-                                <input type="hidden" name="room_total_price" value="<?= ceil((dateDiff($deposit_date, date('Y-m-d H:i:s')) * $room_price)) ?>" class="form-control">
+                                เหลือค่าห้อง : <?= (ceil(($count_night * $room_price) -  $deposit_price)) < 0 ? 0 : (ceil(($count_night * $room_price) -  $deposit_price))  ?> บาท
+                                <input type="hidden" name="room_total_price" value="<?= ceil(($count_night * $room_price)) ?>" class="form-control">
                             </p>
                         </div>
                         <div class="col-6">
@@ -203,14 +204,15 @@
                 <h5 class="card-header text-black border-0">
                     <p class="card-text">
                         <?php
-                        $result_remaining_expenses = $result_meal_price  + (ceil((dateDiff($deposit_date, date('Y-m-d H:i:s')) * $room_price) -  $deposit_price));
+                        $process_result_remaining_expenses = $result_meal_price  + (ceil(($count_night * $room_price) -  $deposit_price));
+                        $result_remaining_expenses = $process_result_remaining_expenses < 0 ? 0 : $process_result_remaining_expenses;
                         ?>
                         ค่าใช้จ่ายทั้งหมด <?= $result_remaining_expenses ?> บาท (<?= Convert($result_remaining_expenses) ?>)
                     </p>
                 </h5>
             </div>
             <input type="hidden" name="remaining_expenses" value='<?= $result_remaining_expenses ?>' class="form-control">
-            <input type="hidden" name="number_nights" value='<?= dateDiff($deposit_date, date('Y-m-d H:i:s')) ?>' class="form-control">
+            <input type="hidden" name="number_nights" value='<?= $count_night ?>' class="form-control">
 
             <button type="submit" name="submit" class="btn btn-success my-3">บันทึกและพิมพ์</button>
             <a href="return.php" class="btn btn-danger">กลับ</a>
