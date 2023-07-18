@@ -217,7 +217,7 @@ if (isset($_POST['bill_id'])) {
             <tr>
                 <td align="center">2</td>
                 <td>จำนวน <?= $number_nights ?> คืน <?= $room_total_price ?> (มัดจำแล้ว <?= $deposit_price  ?>)</td>
-                <td align="right"><?= $room_total_price - $deposit_price ?></td>
+                <td align="right"><?= ($room_total_price - $deposit_price) < 0 ? 0 : ($room_total_price - $deposit_price) ?></td>
             </tr>
             <tr>
                 <td align="center">3</td>

@@ -215,8 +215,7 @@ if (isset($_GET['logout'])) {
                             <th style="text-align: center;">bill id</th>
                             <th style="text-align: center;">ชื่อลูกค้า</th>
                             <th style="text-align: center;">วันที่ทำรายการ</th>
-                            <th style="text-align: center;">ค่าห้องพัก(ค่ามัดจำ)</th>
-                            <th style="text-align: center;">ค่าห้องพัก(ส่วนที่เหลือ)</th>
+                            <th style="text-align: center;">ค่าห้องพัก</th>
                             <th style="text-align: center;">ค่าอาหาร</th>
                             <th style="text-align: center;">รวม</th>
                         </tr>
@@ -226,66 +225,28 @@ if (isset($_GET['logout'])) {
                         $c = mysqli_connect("localhost", "root", "", "cat");
                         mysqli_query($c, "SET NAMES UTF8");
 
-                        $sql1 = " SELECT * FROM bill WHERE duo_time BETWEEN  '" .  $_GET['start_date'] . "' AND '" .  $_GET['end_date'] . "' ORDER BY id DESC";
+                        $sql1 = " SELECT * FROM return_cat WHERE duo_datetime BETWEEN  '" .  $_GET['start_date'] . "' AND '" .  $_GET['end_date'] . "' ORDER BY id DESC";
+                        // echo $sql1;
                         $q1 = mysqli_query($c, $sql1);
 
                         $room_total_price  = 0;
                         $food_total_price  = 0;
-                        $sum_deposit_total_price = 0;
-                        $total_price = 0;
-                        $number = 0;
-                        $deposit_price = 0;
-                        $return_price = 0;
-                        $room_number = 0;
-                        $room_price = 0;
-                        $food_price = 0;
+
                         while ($f = mysqli_fetch_assoc($q1)) {
-                            $number++;
                             //=============
-                            // $cat_name = "";
-                            // $sql2 = " SELECT * FROM customer WHERE cat_id = '" . $f['cat_id'] . "'";
-                            // $q2 = mysqli_query($c, $sql2);
-                            // while ($ca = mysqli_fetch_assoc($q2)) {
-                            //     $cat_name = $cat_name . $ca["cat_name"] . ", ";
-                            // }
-
-                            //=============
-                            if ($f['bill_type'] == "deposit") {
-                                $room_price = 0;
-                                $food_price = 0;
-                                $sql3 = " SELECT * FROM deposit WHERE bill_id = " . $f['id'] . " GROUP BY bill_id";
-                                $q3 = mysqli_query($c, $sql3);
-                                while ($ca = mysqli_fetch_assoc($q3)) {
-                                    $deposit_price = $ca["deposit_price"];
-                                }
-                            } else if ($f['bill_type'] == "return") {
-
-                                $sql3 = " SELECT * FROM return_cat WHERE bill_id = " . $f['id'] . " GROUP BY bill_id";
-             
-                                $q3 = mysqli_query($c, $sql3);
-                                while ($ca = mysqli_fetch_assoc($q3)) {
-                                    $food_price = $ca['total_food_price'];
-                                    //=============
-
-                                    $sql4 = " SELECT * FROM deposit WHERE bill_id = {$ca['bill_id_deposit']} GROUP BY bill_id";
-                                    $q4 = mysqli_query($c, $sql4);
-                                    while ($ca1 = mysqli_fetch_assoc($q4)) {
-                                        $room_number = $ca1["room_number"];
-                                        $deposit_price_tmp = $ca1["deposit_price"];
-                                    }
-                                    //=============
-
-                                    $sql5 = " SELECT * FROM room WHERE id = " . $room_number . "";
-                                    $q5 = mysqli_query($c, $sql5);
-                                    while ($ca2 = mysqli_fetch_assoc($q5)) {
-                                        $room_price = $ca2["roomprice"] * $ca['number_nights'] - $deposit_price_tmp;
-                                        $room_price = $room_price > 0 ? $room_price : 0;
-                                    }
-                                }
-                                $deposit_price = 0;
+                            $room_number = "";
+                            $sql4 = " SELECT * FROM deposit WHERE bill_id = {$f['bill_id_deposit']} GROUP BY bill_id";
+                            $q4 = mysqli_query($c, $sql4);
+                            while ($ca = mysqli_fetch_assoc($q4)) {
+                                $room_number = $ca["room_number"];
                             }
-
-
+                            //=============
+                            $room_price = "";
+                            $sql3 = " SELECT * FROM room WHERE id = " . $room_number . "";
+                            $q3 = mysqli_query($c, $sql3);
+                            while ($ca = mysqli_fetch_assoc($q3)) {
+                                $room_price = $ca["roomprice"] * $f['number_nights'];
+                            }
                             //=============
                             $user_name = "";
                             $sql3 = " SELECT * FROM user WHERE id = " . $f['user_id'] . "";
@@ -297,29 +258,26 @@ if (isset($_GET['logout'])) {
                             //=============
                         ?>
                             <tr>
-                                <td style="text-align: center;"><?= $f['id'] ?></td>
+                                <td style="text-align: center;"><?= $f['bill_id'] ?></td>
                                 <td style="text-align: center;"><?= $user_name ?></td>
-                                <td style="text-align: center;"><?= $f['duo_time'] ?></td>
-                                <td style="text-align: center;"><?= $deposit_price ?></td>
+                                <td style="text-align: center;"><?= $f['duo_datetime'] ?></td>
                                 <td style="text-align: center;"><?= $room_price ?></td>
-                                <td style="text-align: center;"><?= $food_price ?></td>
-                                <td style="text-align: center;"><?= $deposit_price + $room_price + $food_price ?></td>
+                                <td style="text-align: center;"><?= $f['total_food_price'] ?></td>
+                                <td style="text-align: center;"><?= $f['total_food_price'] + $room_price  ?></td>
                             </tr>
 
                         <?php
-                            $sum_deposit_total_price = $sum_deposit_total_price + $deposit_price;
                             $room_total_price = $room_total_price + $room_price;
-                            $food_total_price = $food_total_price + $food_price;
+                            $food_total_price = $food_total_price + $f['total_food_price'];
                         }
 
                         mysqli_close($c);
                         ?>
                         <tr>
                             <td style="text-align: center;font-weight: bold;" colspan="3">รวม</td>
-                            <td style="text-align: center;font-weight: bold;"><?= $sum_deposit_total_price ?></td>
                             <td style="text-align: center;font-weight: bold;"><?= $room_total_price ?></td>
                             <td style="text-align: center;font-weight: bold;"><?= $food_total_price ?></td>
-                            <td style="text-align: center;font-weight: bold;"><?= $sum_deposit_total_price + $food_total_price + $room_total_price  ?></td>
+                            <td style="text-align: center;font-weight: bold;"><?= $food_total_price + $room_total_price ?></td>
                         </tr>
                     </tbody>
             </div>
